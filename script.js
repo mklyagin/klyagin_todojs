@@ -1,17 +1,10 @@
 const buttonTaskAdd = document.querySelector('#add-task-button');
 const inputTask = document.querySelector('#enter-task-input');
 const ulTask = document.querySelector('#task-list');
-let deleteButtonsList = [];
 
 const ENTER_KEY = 'Enter';
 
-const taskList = [];
-
-const deleteTask = () => {
-
-};
-
-
+let taskList = [];
 
 const taskRender = () => {
   let listOfTasks = '';
@@ -34,24 +27,21 @@ const addTask = () => {
   };
 
   taskList.push(task);
+  inputTask.value = '';
   taskRender();
 };
 
 const eventUlHandlerListener = (event) => {
-  let i = 0;
   switch (event.target.type) {
     case 'checkbox':
-      console.log(event.target.type);
-
+      taskList.forEach((task) => {
+        if (task.id === Number(event.target.parentNode.id)) {
+          task.isDone = event.target.checked;
+        }
+      });
       break;
     case ('button'):
-      taskList.forEach((task) => {
-        console.log(task.id, '    ', event.target.parentNode.id);
-        if (task.id === Number(event.target.parentNode.id)) {
-          taskList.splice(i, 1);
-        }
-        i += 1;
-      });
+      taskList = taskList.filter((task) => Number(task.id) !== Number(event.target.parentNode.id));
       taskRender();
 
       break;
