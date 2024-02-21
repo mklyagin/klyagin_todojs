@@ -8,7 +8,11 @@ const ENTER_KEY = 'Enter';
 
 let taskList = [];
 
-const checkboxStateListener = () => taskList.every((task) => task.isDone);
+const checkAllTaskStates = () => {
+  checkAllCheckbox.checked = taskList.length > 0
+    ? (taskList.every((task) => task.isDone))
+    : false;
+};
 
 const taskRender = () => {
   let listOfTasks = '';
@@ -21,9 +25,7 @@ const taskRender = () => {
     </li>`;
   });
   ulTask.innerHTML = listOfTasks;
-  document.querySelectorAll('.check-task').forEach((checkbox) => {
-    checkbox.addEventListener('change', checkboxStateListener);
-  });
+  checkAllTaskStates();
 };
 
 const addTask = () => {
@@ -39,16 +41,18 @@ const addTask = () => {
 };
 
 const eventUlHandlerListener = (event) => {
+  const eventTaskID = Number(event.target.parentNode.id);
   switch (event.target.type) {
     case 'checkbox':
       taskList.forEach((task) => {
-        if (task.id === Number(event.target.parentNode.id)) {
+        if (task.id === eventTaskID) {
           task.isDone = event.target.checked;
         }
+        checkAllTaskStates();
       });
       break;
     case ('button'):
-      taskList = taskList.filter((task) => Number(task.id) !== Number(event.target.parentNode.id));
+      taskList = taskList.filter((task) => task.id !== eventTaskID);
       taskRender();
       break;
     default:
@@ -64,15 +68,15 @@ const inputTaskListener = (event) => {
 };
 
 const deleteCompleted = () => {
-  taskList = taskList.filter((task) => task.isDone === false);
+  taskList = taskList.filter((task) => !task.isDone);
   taskRender();
 };
 
 const checkAll = () => {
   taskList.forEach((task) => {
     task.isDone = checkAllCheckbox.checked;
-    document.querySelectorAll('.check-task').forEach((checkbox) => {
-      checkbox.checked = checkAllCheckbox.checked;
+    Array.from(ulTask.children).forEach((li) => {
+      li.children[0].checked = checkAllCheckbox.checked;
     });
   });
 };
