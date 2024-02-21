@@ -1,22 +1,29 @@
 const buttonTaskAdd = document.querySelector('#add-task-button');
 const inputTask = document.querySelector('#enter-task-input');
 const ulTask = document.querySelector('#task-list');
+const checkAllCheckbox = document.querySelector('#check-all-checkbox');
+const deleteAllCompletedButton = document.querySelector('#delete-all-completed-button');
 
 const ENTER_KEY = 'Enter';
 
 let taskList = [];
+
+const checkboxStateListener = () => taskList.every((task) => task.isDone);
 
 const taskRender = () => {
   let listOfTasks = '';
   taskList.forEach((task) => {
     listOfTasks
     += `<li id=${task.id}>
-    <input type='checkbox'></input>
+    <input type="checkbox" class="check-task"></input>
     <span>${task.title}</span>
-    <button type='button' id='deleteTaskButton'>X</button>
+    <button type="button">X</button>
     </li>`;
   });
   ulTask.innerHTML = listOfTasks;
+  document.querySelectorAll('.check-task').forEach((checkbox) => {
+    checkbox.addEventListener('change', checkboxStateListener);
+  });
 };
 
 const addTask = () => {
@@ -43,7 +50,6 @@ const eventUlHandlerListener = (event) => {
     case ('button'):
       taskList = taskList.filter((task) => Number(task.id) !== Number(event.target.parentNode.id));
       taskRender();
-
       break;
     default:
       break;
@@ -57,6 +63,22 @@ const inputTaskListener = (event) => {
   }
 };
 
+const deleteCompleted = () => {
+  taskList = taskList.filter((task) => task.isDone === false);
+  taskRender();
+};
+
+const checkAll = () => {
+  taskList.forEach((task) => {
+    task.isDone = checkAllCheckbox.checked;
+    document.querySelectorAll('.check-task').forEach((checkbox) => {
+      checkbox.checked = checkAllCheckbox.checked;
+    });
+  });
+};
+
 ulTask.addEventListener('click', eventUlHandlerListener);
 buttonTaskAdd.addEventListener('click', addTask);
 inputTask.addEventListener('keydown', inputTaskListener);
+deleteAllCompletedButton.addEventListener('click', deleteCompleted);
+checkAllCheckbox.addEventListener('click', checkAll);
