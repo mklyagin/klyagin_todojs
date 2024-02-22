@@ -22,7 +22,7 @@ const taskRender = () => {
     += `<li id=${task.id}>
     <input type="checkbox" class="check-task">
     <span class="task-title">${task.title}</span>
-    <input class="edit-task" hidden>
+    <input class="edit-task" id=${task.id} value=${task.title} hidden>
     <button type="button" class="delete-task">X</button>
     </li>`;
   });
@@ -53,19 +53,17 @@ const editVisibilityToggle = (target) => {
 
 const editMode = (event) => {
   console.log(event.type);
-  if (event.key === ENTER_KEY || event.type === 'blur') {
-    //this is for save (need remake to blur)
-    //event.target.previousElementSibling.innerHTML = `${event.target.value}`;
+  if (event.key === ESCAPE_KEY) {
+    taskRender();
+  
+  } else if (event.key === ENTER_KEY || event.type === 'blur') {
     editVisibilityToggle(event.target.previousElementSibling);
-    console.log(taskList);
     taskList.forEach((task) => {
-      //console.log(task);
-      if (task.id === event.target.id) {
+      if (task.id === Number(event.target.id)) {
         task.title = event.target.value;
       }
     });
     taskRender();
-  }
 };
 
 const eventUlHandlerListener = (event) => {
