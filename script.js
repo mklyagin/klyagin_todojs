@@ -52,10 +52,9 @@ const editVisibilityToggle = (target) => {
 };
 
 const editMode = (event) => {
-  console.log(event.type);
+  console.log(event);
   if (event.key === ESCAPE_KEY) {
     taskRender();
-  
   } else if (event.key === ENTER_KEY || event.type === 'blur') {
     editVisibilityToggle(event.target.previousElementSibling);
     taskList.forEach((task) => {
@@ -64,6 +63,7 @@ const editMode = (event) => {
       }
     });
     taskRender();
+  }
 };
 
 const eventUlHandlerListener = (event) => {
