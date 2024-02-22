@@ -44,16 +44,27 @@ const addTask = () => {
 
 const editVisibilityToggle = (target) => {
   target.hidden = !target.hidden;
-  target.nextElementSibling.hidden = !target.nextElementSibling.hidden;
+  if (target.className === 'task-title') {
+    target.nextElementSibling.hidden = !target.nextElementSibling.hidden;
+  } else {
+    target.previousElementSibling.hidden = !target.previousElementSibling.hidden;
+  }
 };
 
-const saveEdit = (event) => {
-  if (event.key === ESCAPE_KEY) {
-    console.log('Escape!');
-    event.target.previousElementSibling.innerHTML = `${event.target.value}`;
-    event.target.previousElementSibling.hidden = false;
-    event.target.hidden = true;
-    console.log(event.target.previousElementSibling.hidden);
+const editMode = (event) => {
+  console.log(event.type);
+  if (event.key === ENTER_KEY || event.type === 'blur') {
+    //this is for save (need remake to blur)
+    //event.target.previousElementSibling.innerHTML = `${event.target.value}`;
+    editVisibilityToggle(event.target.previousElementSibling);
+    console.log(taskList);
+    taskList.forEach((task) => {
+      //console.log(task);
+      if (task.id === event.target.id) {
+        task.title = event.target.value;
+      }
+    });
+    taskRender();
   }
 };
 
@@ -73,16 +84,11 @@ const eventUlHandlerListener = (event) => {
       taskRender();
       break;
     case ('task-title'):
-      //editVisibilityToggle(event.target);
-      event.target.hidden = !event.target.hidden;
-      event.target.nextElementSibling.hidden = !event.target.nextElementSibling.hidden;
-      console.log(event.target.nextElementSibling.events);
-      event.target.nextElementSibling.addEventListener('blur', saveEdit);
-      event.target.nextElementSibling.addEventListener('keydown', saveEdit);
+      editVisibilityToggle(event.target);
+      event.target.nextElementSibling.addEventListener('blur', editMode);
+      event.target.nextElementSibling.addEventListener('keydown', editMode);
       break;
     default:
-      console.log(event.target.type);
-      console.log(event.target.name);
       break;
   }
 };
