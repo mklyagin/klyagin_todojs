@@ -21,6 +21,16 @@ const checkAllTaskStates = () => {
     : false;
 };
 
+const setActive = (event) => {
+  const { target } = event;
+  if (target.tagName === 'BUTTON') {
+    Array.from(target.parentElement.children).forEach((elem) => {
+      elem.classList.remove('active');
+    });
+    target.classList.add('active');
+  }
+};
+
 const listToPages = (currentList) => {
   taskListPages = [[]];
   let index = 0;
@@ -54,7 +64,7 @@ const taskValidation = () => {
   });
   taskList = taskList.filter((task) => task.title.length);
 };
-
+////////////////////////
 const taskFilterCounter = () => {
   const counter = {
     total: taskList.length,
@@ -75,7 +85,8 @@ const taskRender = (isAdding) => {
   if (isAdding) {
     currentPage = taskListPages.length - 1;
   }
-  taskListPages[currentPage].forEach((task) => {
+  console.log(Math.abs(currentPage));
+  taskListPages[Math.abs(currentPage)].forEach((task) => {
     listOfTasks
     += `<li id=${task.id}>
     <input type="checkbox" class="check-task" ${task.isDone ? 'checked' : ''}>
@@ -97,6 +108,8 @@ const taskRender = (isAdding) => {
 };
 
 const setPage = (event) => {
+  setActive(event);
+  console.log('page is ', event.target.innerHTML);
   if (event.target.className === 'page-number') {
     currentPage = event.target.innerHTML - 1;
   }
@@ -185,21 +198,28 @@ const checkAll = () => {
 };
 
 const tabulationListener = (event) => {
+  setActive(event);
   const tabNumbers = taskFilterCounter();
   switch (event.target.id) {
     case ('show-all'):
       filterType = 'all';
-      currentPage = Math.ceil((tabNumbers.all - 1) / 5);
+      console.log(tabNumbers);
+      currentPage = Math.floor((tabNumbers.total - 1) / 5);
+      console.log('Form tab', currentPage);
       taskRender();
       break;
     case ('show-active'):
       filterType = 'active';
-      currentPage = Math.ceil((tabNumbers.active - 1) / 5);
+      console.log(tabNumbers);
+      currentPage = Math.floor((tabNumbers.active - 1) / 5);
+      console.log('Form tab', currentPage);
       taskRender();
       break;
     case ('show-completed'):
       filterType = 'completed';
-      currentPage = Math.ceil((tabNumbers.completed - 1) / 5);
+      console.log(tabNumbers);
+      currentPage = Math.floor((tabNumbers.completed - 1) / 5);
+      console.log('Form tab', currentPage);
       taskRender();
       break;
     default:
