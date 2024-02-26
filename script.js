@@ -52,10 +52,9 @@ const editVisibilityToggle = (target) => {
 };
 
 const editMode = (event) => {
-  console.log(event);
   if (event.key === ESCAPE_KEY) {
     taskRender();
-  } else if (event.key === ENTER_KEY || event.type === 'blur') {
+  } else if (event.key === ENTER_KEY || (event.type === 'blur' && event.sourceCapabilities !== null)) {
     editVisibilityToggle(event.target.previousElementSibling);
     taskList.forEach((task) => {
       if (task.id === Number(event.target.id)) {
@@ -81,13 +80,16 @@ const eventUlHandlerListener = (event) => {
       taskList = taskList.filter((task) => task.id !== eventTaskID);
       taskRender();
       break;
-    case ('task-title'):
-      editVisibilityToggle(event.target);
-      event.target.nextElementSibling.addEventListener('blur', editMode);
-      event.target.nextElementSibling.addEventListener('keydown', editMode);
-      break;
     default:
       break;
+  }
+};
+
+const editTaskListener = (event) => {
+  if (event.target.className === 'task-title') {
+    editVisibilityToggle(event.target);
+    event.target.nextElementSibling.addEventListener('blur', editMode);
+    event.target.nextElementSibling.addEventListener('keydown', editMode);
   }
 };
 
@@ -113,6 +115,7 @@ const checkAll = () => {
 };
 
 ulTask.addEventListener('click', eventUlHandlerListener);
+ulTask.addEventListener('dblclick', editTaskListener);
 buttonTaskAdd.addEventListener('click', addTask);
 inputTask.addEventListener('keydown', inputTaskListener);
 deleteAllCompletedButton.addEventListener('click', deleteCompleted);
