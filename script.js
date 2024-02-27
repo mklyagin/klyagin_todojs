@@ -198,7 +198,7 @@ const main = () => {
       case 0:
         return 0;
       case totalNumber < 0:
-        return console.log('pagination counter returned num < 0');
+        return 0;
       default:
         return (Math.ceil(totalNumber / 5) - 1);
     }
