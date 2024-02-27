@@ -1,4 +1,4 @@
-const main = () => {
+(() => {
   const buttonTaskAdd = document.querySelector('#add-task-button');
   const inputTask = document.querySelector('#enter-task-input');
   const ulTask = document.querySelector('#task-list');
@@ -82,7 +82,7 @@ const main = () => {
     += `<li id=${task.id}>
     <input type="checkbox" class="check-task" ${task.isDone ? 'checked' : ''}>
     <span class="task-title">${task.title}</span>
-    <input hidden class="edit-task" id=${task.id} value=${task.title} >
+    <input hidden max-length="30" class="edit-task" id=${task.id} value=${task.title} >
     <button type="button" class="delete-task">X</button>
     </li>`;
     });
@@ -236,5 +236,4 @@ const main = () => {
   checkAllCheckbox.addEventListener('click', checkAll);
   tabulationDiv.addEventListener('click', tabulationListener);
   paginationDiv.addEventListener('click', setPage);
-};
-main();
+})();
