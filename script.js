@@ -82,7 +82,7 @@
     += `<li id=${task.id}>
     <input type="checkbox" class="check-task" ${task.isDone ? 'checked' : ''}>
     <span class="task-title">${task.title}</span>
-    <input hidden max-length="30" class="edit-task" id=${task.id} value=${task.title} >
+    <input hidden maxlength="15" class="edit-task" id=${task.id} value=${task.title} >
     <button type="button" class="delete-task">X</button>
     </li>`;
     });
