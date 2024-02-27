@@ -6,6 +6,7 @@ body {
   align-items: center;
   justify-content: center;
   font-family: Impact, Haettenschweiler, 'Arial Narrow Regular', sans-serif;
+  background-color: pink;
 }
 
 body > h1 {
@@ -16,9 +17,30 @@ button {
  border: none;
 }
 
+ul {
+  padding: 0;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 li {
   text-decoration: none;
   list-style-type: none;
+  background-color: #a1fcff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 250px;
+  margin: 5px 0;
+  border-radius: 5px;
+  height: 40px;
+}
+
+.delete-task {
+  background-color: rgb(255, 88, 88);
 }
 
 .task-functions {
@@ -27,19 +49,33 @@ li {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  background: #c2c2c2;
+  background: #ffffff;
 }
 
 .task-functions > button {
   background-color: inherit;
 }
 
+#add-task-button {
+  margin: 10px 0;
+
+}
+
 .tabulation {
+  margin-top: 40px;
   background-color: inherit;
 }
 
 .tab-button {
   background-color: inherit;
+  width: 100px;
+}
+
+#delete-all-completed-button {
+  color: rgb(255, 106, 106);
+  font-size: 15px;
+  margin-bottom: 5px;
+  border: 2px solid #a1fcff;
 }
 
 .hidden-element {
@@ -47,7 +83,7 @@ li {
 }
 
 .active {
-  background-color: rgb(255, 142, 142);
+  background-color: #a1fcff;
 }
 
 .page-number {
