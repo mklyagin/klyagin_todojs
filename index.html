@@ -10,18 +10,20 @@
     <h1>ToDo JS</h1>
     <input id="enter-task-input" placeholder="Type your task">
     <button type="button" id="add-task-button">Add task</button>
-    <div>
+    <div class ='check-all-task'>
       <input type="checkbox" id="check-all-checkbox">
       <span>Check all tasks</span>
     </div>
-    <ul id="task-list"></ul>
-    <button type="button" id="delete-all-completed-button">
-      Delete all completed
-    </button>
-    <div id="tabulation">
-      <button id="show-all" class="active">All (0)</button>
-      <button id="show-active">Active (0)</button>
-      <button id="show-completed">Completed (0)</button>
+    <div class="task-functions">
+      <ul id="task-list"></ul>
+      <button type="button" id="delete-all-completed-button">
+        Delete all completed
+      </button>
+      <div id="tabulation">
+        <button id="show-all" class="tab-button active">All (0)</button>
+        <button id="show-active" class="tab-button">Active (0)</button>
+        <button id="show-completed" class="tab-button" >Completed (0)</button>
+      </div>
     </div>
     <div id="pagination"></div>
     <script src="./script.js"></script>
