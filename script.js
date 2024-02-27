@@ -12,23 +12,13 @@ const QUANTITY_OF_TASKS = 5;
 
 let taskList = [];
 let taskListPages = [[]];
-let filterType = 'all';
+let filterType = 0;
 let currentPage = 0;
 
 const checkAllTaskStates = () => {
   checkAllCheckbox.checked = taskList.length
     ? (taskList.every((task) => task.isDone))
     : false;
-};
-
-const setActive = (event) => {
-  const { target } = event;
-  if (target.tagName === 'BUTTON') {
-    Array.from(target.parentElement.children).forEach((elem) => {
-      elem.classList.remove('active');
-    });
-    target.classList.add('active');
-  }
 };
 
 const listToPages = (currentList) => {
@@ -45,12 +35,12 @@ const listToPages = (currentList) => {
 
 const taskFilter = (currentList) => {
   switch (filterType) {
-    case ('all'):
+    case (0):
       return currentList;
-    case ('active'):
+    case (1):
       currentList = currentList.filter((task) => !task.isDone);
       return currentList;
-    case ('completed'):
+    case (2):
       currentList = currentList.filter((task) => task.isDone);
       return currentList;
     default:
@@ -64,7 +54,6 @@ const taskValidation = () => {
   });
   taskList = taskList.filter((task) => task.title.length);
 };
-////////////////////////
 const taskFilterCounter = () => {
   const counter = {
     total: taskList.length,
@@ -85,8 +74,7 @@ const taskRender = (isAdding) => {
   if (isAdding) {
     currentPage = taskListPages.length - 1;
   }
-  console.log(Math.abs(currentPage));
-  taskListPages[Math.abs(currentPage)].forEach((task) => {
+  taskListPages[currentPage].forEach((task) => {
     listOfTasks
     += `<li id=${task.id}>
     <input type="checkbox" class="check-task" ${task.isDone ? 'checked' : ''}>
@@ -98,19 +86,24 @@ const taskRender = (isAdding) => {
   ulTask.innerHTML = listOfTasks;
   checkAllTaskStates();
   const tabNumbers = taskFilterCounter();
+  for (let index = 0; index < 3; index += 1) {
+    if (index === filterType) {
+      tabulationDiv.children[index].classList.add('active');
+    } else {
+      tabulationDiv.children[index].classList.remove('active');
+    }
+  }
   tabulationDiv.children[0].innerHTML = `All (${tabNumbers.total})`;
   tabulationDiv.children[1].innerHTML = `Active (${tabNumbers.active})`;
   tabulationDiv.children[2].innerHTML = `Completed (${tabNumbers.completed})`;
   for (let i = 0; i < taskListPages.length; i += 1) {
-    prePaginationList += `<button class="page-number">${i + 1}</button>`;
+    prePaginationList += `<button class="page-number ${(i === currentPage ? 'active' : '')}">${i + 1}</button>`;
   }
   paginationDiv.innerHTML = prePaginationList;
 };
 
 const setPage = (event) => {
-  setActive(event);
-  console.log('page is ', event.target.innerHTML);
-  if (event.target.className === 'page-number') {
+  if (event.target.classList.contains('page-number')) {
     currentPage = event.target.innerHTML - 1;
   }
   taskRender();
@@ -197,29 +190,33 @@ const checkAll = () => {
   taskRender();
 };
 
+const paginationCounter = (totalNumber) => {
+  switch (totalNumber) {
+    case 0:
+      return 0;
+    case totalNumber < 0:
+      return console.log('pagination counter returned num < 0');
+    default:
+      return (Math.ceil(totalNumber / 5) - 1);
+  }
+};
+
 const tabulationListener = (event) => {
-  setActive(event);
   const tabNumbers = taskFilterCounter();
   switch (event.target.id) {
     case ('show-all'):
-      filterType = 'all';
-      console.log(tabNumbers);
-      currentPage = Math.floor((tabNumbers.total - 1) / 5);
-      console.log('Form tab', currentPage);
+      filterType = 0;
+      currentPage = paginationCounter(tabNumbers.total);
       taskRender();
       break;
     case ('show-active'):
-      filterType = 'active';
-      console.log(tabNumbers);
-      currentPage = Math.floor((tabNumbers.active - 1) / 5);
-      console.log('Form tab', currentPage);
+      filterType = 1;
+      currentPage = paginationCounter(tabNumbers.active);
       taskRender();
       break;
     case ('show-completed'):
-      filterType = 'completed';
-      console.log(tabNumbers);
-      currentPage = Math.floor((tabNumbers.completed - 1) / 5);
-      console.log('Form tab', currentPage);
+      filterType = 2;
+      currentPage = paginationCounter(tabNumbers.completed);
       taskRender();
       break;
     default:
