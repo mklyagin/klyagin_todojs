@@ -36,7 +36,33 @@ li {
   width: 250px;
   margin: 5px 0;
   border-radius: 5px;
-  height: 40px;
+  min-height: 40px;
+  padding: 10px 5px 10px 5px;
+}
+
+.input-section {
+  width: 310px;
+  background: #fff;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+#enter-task-input {
+  padding: 0;
+  margin: 0;
+  border: none;
+  width: 220px;
+  height: 30px;
+  border-radius: 5px 0 0 5px;
+  padding: 0 5px;
+}
+
+#add-task-button {
+  padding: 0;
+  margin: 0;
+  width: 70px;
+  background-color: #fff;
+  height: 30px;
 }
 
 .delete-task {
@@ -50,15 +76,11 @@ li {
   align-items: center;
   justify-content: space-between;
   background: #ffffff;
+  width: 310px;
 }
 
 .task-functions > button {
   background-color: inherit;
-}
-
-#add-task-button {
-  margin: 10px 0;
-
 }
 
 .tabulation {

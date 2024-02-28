@@ -82,7 +82,7 @@
     += `<li id=${task.id}>
     <input type="checkbox" class="check-task" ${task.isDone ? 'checked' : ''}>
     <span class="task-title">${task.title}</span>
-    <input hidden maxlength="15" class="edit-task" id=${task.id} value=${task.title} >
+    <input hidden maxlength="150" class="edit-task" id=${task.id} value=${task.title} >
     <button type="button" class="delete-task">X</button>
     </li>`;
     });
@@ -168,7 +168,7 @@
       taskRender();
     } else if (elemClass === 'delete-task' && event.type === 'click') {
       taskList = taskList.filter((task) => task.id !== eventTaskID);
-      taskRender();
+      taskRender(true);
     } else if (elemClass === 'task-title' && event.detail === 2) {
       editVisibilityToggle(event.target);
     }
