@@ -15,6 +15,12 @@ body > h1 {
 
 button {
  border: none;
+ cursor: pointer;
+}
+
+input {
+  cursor: pointer;
+  word-break: break-all;
 }
 
 ul {
@@ -111,4 +117,15 @@ li {
 .page-number {
   border: 1px solid black;
   border-radius: 100%;
+}
+
+.task-title {
+  max-width: 100%;
+  word-break: break-all;
+  padding: 10px;
+}
+
+.edit-task {
+  padding: 10px;
+  max-width: 100%;
 }
