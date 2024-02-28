@@ -2,6 +2,7 @@
   const ENTER_KEY = 'Enter';
   const ESCAPE_KEY = 'Escape';
   const QUANTITY_OF_TASKS = 5;
+  const DOUBLE_CLICK = 2;
 
   const buttonTaskAdd = document.querySelector('#add-task-button');
   const inputTask = document.querySelector('#enter-task-input');
@@ -14,9 +15,32 @@
   let taskList = [];
   let taskListPages = [[]];
   let filterType = 'show-all';
-  let currentPage = 0;
+  let currentPage = 1;
 
   const strValidation = (inputStr) => inputStr.replace(/[!@#$%^&*()'"`<>;:]/g, '');
+
+  const calcPagesNumber = (tasksArray) => {
+    if (tasksArray.length === 0) {
+      return 1;
+    }
+    return Math.ceil(tasksArray.length / QUANTITY_OF_TASKS);
+  };
+
+  const getTasksByFilterType = () => {
+    if (filterType === 'show-active') {
+      return taskList.filter((task) => !task.isDone);
+    } if (filterType === 'show-completed') {
+      return taskList.filter((task) => task.isDone);
+    }
+    return taskList;
+  };
+
+  const getSlicedTasks = () => {
+    let list = getTasksByFilterType();
+    const endIndex = currentPage * QUANTITY_OF_TASKS;
+    const startIndex = endIndex - QUANTITY_OF_TASKS;
+    return list.splice(startIndex, endIndex);
+  };
 
   const checkAllTaskStates = () => {
     checkAllCheckbox.checked = taskList.length
@@ -36,15 +60,6 @@
     });
   };
 
-  const taskFilter = (currentList) => {
-    if (filterType === 'show-active') {
-      return currentList.filter((task) => !task.isDone);
-    } if (filterType === 'show-completed') {
-      return currentList.filter((task) => task.isDone);
-    }
-    return currentList;
-  };
-
   const taskValidation = () => {
     taskList.forEach((task) => {
       task.title = task.title.trim();
@@ -61,17 +76,14 @@
     return counter;
   };
 
-  const taskRender = (isAdding) => {
+  const taskRender = () => {
     let listOfTasks = '';
     let prePaginationList = '';
     let currentList = [];
     taskValidation();
-    currentList = taskFilter(taskList);
+    currentList = getTasksByFilterType();
     listToPages(currentList);
-    if (isAdding) {
-      currentPage = taskListPages.length - 1;
-    }
-    taskListPages[currentPage].forEach((task) => {
+    taskListPages[currentPage - 1].forEach((task) => {
       listOfTasks += `
         <li id=${task.id}>
           <input type="checkbox" class="check-task" ${task.isDone ? 'checked' : ''}>
@@ -94,15 +106,16 @@
     tabulationDiv.children[0].innerHTML = `All (${tabNumbers.total})`;
     tabulationDiv.children[1].innerHTML = `Active (${tabNumbers.active})`;
     tabulationDiv.children[2].innerHTML = `Completed (${tabNumbers.completed})`;
-    for (let i = 0; i < taskListPages.length; i += 1) {
-      prePaginationList += `<button class="page-number ${(i === currentPage ? 'active' : '')}">${i + 1}</button>`;
+    for (let i = 1; i <= Math.ceil(currentList.length / QUANTITY_OF_TASKS); i += 1) {
+      console.log(i, currentPage);
+      prePaginationList += `<button class="page-number ${(i === currentPage ? 'active' : '')}">${i}</button>`;
     }
     paginationDiv.innerHTML = prePaginationList;
   };
 
   const setPage = (event) => {
     if (event.target.classList.contains('page-number')) {
-      currentPage = event.target.innerHTML - 1;
+      currentPage = +event.target.innerHTML;
     }
     taskRender();
   };
@@ -117,7 +130,7 @@
     taskList.push(task);
     inputTask.value = '';
     filterType = 'show-all';
-    taskRender(true);
+    taskRender();
   };
 
   const editVisibilityToggle = (target) => {
@@ -162,10 +175,10 @@
         checkAllTaskStates();
       });
       taskRender();
-    } else if (elemClass === 'delete-task' && event.type === 'click') {
+    } else if (elemClass === 'delete-task') {
       taskList = taskList.filter((task) => task.id !== eventTaskID);
       taskRender(true);
-    } else if (elemClass === 'task-title' && event.detail === 2) {
+    } else if (elemClass === 'task-title' && event.detail === DOUBLE_CLICK) {
       editVisibilityToggle(event.target);
     }
   };
@@ -188,35 +201,10 @@
     taskRender();
   };
 
-  const paginationCounter = (totalNumber) => {
-    if (totalNumber <= 0) {
-      return 0;
-    }
-    return (Math.ceil(totalNumber / 5) - 1);
-  };
-
   const tabulationListener = (event) => {
-    const tabNumbers = taskFilterCounter();
-    const { id } = event.target;
-    switch (id) {
-      case ('show-all'):
-        filterType = id;
-        currentPage = paginationCounter(tabNumbers.total);
-        taskRender();
-        break;
-      case ('show-active'):
-        filterType = id;
-        currentPage = paginationCounter(tabNumbers.active);
-        taskRender();
-        break;
-      case ('show-completed'):
-        filterType = id;
-        currentPage = paginationCounter(tabNumbers.completed);
-        taskRender();
-        break;
-      default:
-        break;
-    }
+    currentPage = 0;
+    filterType = event.target.id;
+    taskRender();
   };
 
   ulTasks.addEventListener('click', eventUlHandlerListener);
