@@ -70,6 +70,7 @@
     listToPages(currentList);
     if (isAdding) {
       currentPage = taskListPages.length - 1;
+      inputTask.focus();
     }
     taskListPages[currentPage].forEach((task) => {
       listOfTasks += `
@@ -173,6 +174,7 @@
   const inputTaskListener = (event) => {
     if (event.key === ENTER_KEY) {
       addTask();
+      inputTask.blur();
     }
   };
 
