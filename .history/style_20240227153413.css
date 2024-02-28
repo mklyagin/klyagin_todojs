@@ -1,0 +1,13 @@
+
+body {
+  display: flex;
+  margin: auto;
+}
+
+.hidden-element {
+  display: none;
+}
+
+.active {
+  background: red;
+}

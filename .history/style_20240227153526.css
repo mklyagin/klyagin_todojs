@@ -1,0 +1,20 @@
+
+body {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+body > h1 {
+  font-size: 50px;
+}
+
+.hidden-element {
+  display: none;
+}
+
+.active {
+  background: red;
+}

@@ -1,0 +1,14 @@
+
+body {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+.hidden-element {
+  display: none;
+}
+
+.active {
+  background: red;
+}
