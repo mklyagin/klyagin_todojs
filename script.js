@@ -3,6 +3,17 @@
   const ESCAPE_KEY = 'Escape';
   const QUANTITY_OF_TASKS = 5;
   const DOUBLE_CLICK = 2;
+  const ESCAPED_CHARS = {
+    '<': '&lt;',
+    '>': '&gt;',
+    '/': '&#x2F;',
+    '№': '&#8470;',
+    '%': '&#37;',
+    ';': '&#59;',
+    ':': '&#58;',
+    '?': '&#63;',
+    '*': '&#42;',
+  };
 
   const buttonTaskAdd = document.querySelector('#add-task-button');
   const inputTask = document.querySelector('#enter-task-input');
@@ -13,14 +24,12 @@
   const paginationDiv = document.querySelector('#pagination');
 
   let taskList = [];
-  let taskListPages = [[]];
   let filterType = 'show-all';
   let currentPage = 1;
 
-  //const strValidation = (inputStr) => inputStr.replace(/[!@#$%^&*()'"`<>;:]/g, '');
+  const getValidatedText = (stroke) => stroke.trim().replace(/[<>/№%;:?*]/g, (match) => ESCAPED_CHARS[match]) ?? stroke;
 
   const getTasksByFilterType = () => {
-    console.log('get task by filtertype', taskList);
     if (filterType === 'show-active') {
       return taskList.filter((task) => !task.isDone);
     } if (filterType === 'show-completed') {
@@ -35,6 +44,12 @@
       return 1;
     }
     return Math.ceil(currentArrayLength / QUANTITY_OF_TASKS);
+  };
+
+  const checkValidPage = () => {
+    if (currentPage > calcPagesNumber) {
+      currentPage -= 1;
+    }
   };
 
   const getSlicedTasks = () => {
@@ -60,25 +75,7 @@
     return counter;
   };
 
-  const taskRender = () => {
-    let listOfTasks = '';
-    let prePaginationList = '';
-    let currentList = [];
-    console.log('start render', taskList);
-    currentList = getSlicedTasks();
-    console.log('from render', taskList);
-    currentList.forEach((task) => {
-      listOfTasks += `
-        <li id=${task.id}>
-          <input type="checkbox" class="check-task" ${task.isDone ? 'checked' : ''}>
-          <span class="task-title">${task.title}</span>
-          <input hidden maxlength="150" class="edit-task" id=${task.id} value=${task.title} >
-          <button type="button" class="delete-task">X</button>
-        </li>
-      `;
-    });
-    ulTasks.innerHTML = listOfTasks;
-    checkAllTaskStates();
+  const updateTabulationDivesState = () => {
     const tabNumbers = taskFilterCounter();
     for (let index = 0; index < 3; index += 1) {
       if (tabulationDiv.children[index].id === filterType) {
@@ -90,6 +87,32 @@
     tabulationDiv.children[0].innerHTML = `All (${tabNumbers.total})`;
     tabulationDiv.children[1].innerHTML = `Active (${tabNumbers.active})`;
     tabulationDiv.children[2].innerHTML = `Completed (${tabNumbers.completed})`;
+  };
+
+  const taskRender = () => {
+    let listOfTasks = '';
+    let prePaginationList = '';
+    let currentList = [];
+    currentList = getSlicedTasks();
+    currentList.forEach((task) => {
+      listOfTasks += `
+        <li id=${task.id}>
+          <input type="checkbox" class="check-task" ${task.isDone ? 'checked' : ''}>
+          <span class="task-title">${task.title}</span>
+          <input
+            hidden
+            maxlength="150"
+            class="edit-task"
+            id=${task.id}
+            value=${task.title}
+          >
+          <button type="button" class="delete-task">X</button>
+        </li>
+      `;
+    });
+    ulTasks.innerHTML = listOfTasks;
+    checkAllTaskStates();
+    updateTabulationDivesState();
     for (let i = 1; i <= calcPagesNumber(); i += 1) {
       prePaginationList += `<button class="page-number ${(i === currentPage ? 'active' : '')}">${i}</button>`;
     }
@@ -98,7 +121,7 @@
 
   const setPage = (event) => {
     if (event.target.classList.contains('page-number')) {
-      currentPage = Number(event.target.innerHTML);
+      currentPage = Number(event.target.textContent);
     }
     taskRender();
   };
@@ -106,12 +129,13 @@
   const addTask = () => {
     const task = {
       id: Date.now(),
-      title: inputTask.value,
+      title: getValidatedText(inputTask.value),
       isDone: false,
     };
     taskList.push(task);
     inputTask.value = '';
     filterType = 'show-all';
+    currentPage = calcPagesNumber();
     taskRender();
   };
 
@@ -127,11 +151,10 @@
 
   const editMode = (event) => {
     if (event.target.className === 'edit-task') {
-      if (event.key === ESCAPE_KEY) {
-        taskRender();
-      } else if (event.key === ENTER_KEY || (event.type === 'blur' && event.sourceCapabilities)) {
-        event.target.value = event.target.value.trim();
-        if (!event.target.value.length) {
+      if (event.key === ESCAPE_KEY) taskRender();
+      if (event.key === ENTER_KEY || (event.type === 'blur' && event.sourceCapabilities)) {
+        event.target.value = getValidatedText(event.target.value);
+        if (event.target.value.length === 0) {
           taskRender();
         } else {
           editVisibilityToggle(event.target.previousElementSibling);
@@ -148,19 +171,22 @@
 
   const eventUlHandlerListener = (event) => {
     const eventTaskID = Number(event.target.parentNode.id);
-    const elemClass = event.target.className;
-    if (elemClass === 'check-task') {
+    const { className } = event.target;
+    if (className === 'check-task') {
       taskList.forEach((task) => {
         if (task.id === eventTaskID) {
           task.isDone = event.target.checked;
         }
-        checkAllTaskStates();
       });
+      //checkValidPage();
+      currentPage = calcPagesNumber();
       taskRender();
-    } else if (elemClass === 'delete-task') {
+    } else if (className === 'delete-task') {
       taskList = taskList.filter((task) => task.id !== eventTaskID);
-      taskRender(true);
-    } else if (elemClass === 'task-title' && event.detail === DOUBLE_CLICK) {
+      //checkValidPage();
+      currentPage = calcPagesNumber();
+      taskRender();
+    } else if (className === 'task-title' && event.detail === DOUBLE_CLICK) {
       editVisibilityToggle(event.target);
     }
   };
@@ -173,6 +199,8 @@
 
   const deleteCompleted = () => {
     taskList = taskList.filter((task) => !task.isDone);
+    //checkValidPage();
+    currentPage = calcPagesNumber();
     taskRender();
   };
 
