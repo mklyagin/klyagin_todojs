@@ -46,12 +46,6 @@
     return Math.ceil(currentArrayLength / QUANTITY_OF_TASKS);
   };
 
-  const checkValidPage = () => {
-    if (currentPage > calcPagesNumber) {
-      currentPage -= 1;
-    }
-  };
-
   const getSlicedTasks = () => {
     const list = getTasksByFilterType();
     const endIndex = currentPage * QUANTITY_OF_TASKS;
@@ -127,6 +121,10 @@
   };
 
   const addTask = () => {
+    if (getValidatedText(inputTask.value).length === 0) {
+      inputTask.value = '';
+      return taskRender;
+    }
     const task = {
       id: Date.now(),
       title: getValidatedText(inputTask.value),
@@ -136,7 +134,7 @@
     inputTask.value = '';
     filterType = 'show-all';
     currentPage = calcPagesNumber();
-    taskRender();
+    return taskRender();
   };
 
   const editVisibilityToggle = (target) => {
@@ -178,12 +176,10 @@
           task.isDone = event.target.checked;
         }
       });
-      //checkValidPage();
       currentPage = calcPagesNumber();
       taskRender();
     } else if (className === 'delete-task') {
       taskList = taskList.filter((task) => task.id !== eventTaskID);
-      //checkValidPage();
       currentPage = calcPagesNumber();
       taskRender();
     } else if (className === 'task-title' && event.detail === DOUBLE_CLICK) {
@@ -199,7 +195,6 @@
 
   const deleteCompleted = () => {
     taskList = taskList.filter((task) => !task.isDone);
-    //checkValidPage();
     currentPage = calcPagesNumber();
     taskRender();
   };
