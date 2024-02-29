@@ -17,7 +17,7 @@
   let filterType = 'show-all';
   let currentPage = 1;
 
-  const strValidation = (inputStr) => inputStr.replace(/[!@#$%^&*()'"`<>;:]/g, '');
+  //const strValidation = (inputStr) => inputStr.replace(/[!@#$%^&*()'"`<>;:]/g, '');
 
   const calcPagesNumber = (tasksArray) => {
     if (tasksArray.length === 0) {
@@ -27,6 +27,7 @@
   };
 
   const getTasksByFilterType = () => {
+    console.log('get task by filtertype', taskList);
     if (filterType === 'show-active') {
       return taskList.filter((task) => !task.isDone);
     } if (filterType === 'show-completed') {
@@ -39,6 +40,7 @@
     let list = getTasksByFilterType();
     const endIndex = currentPage * QUANTITY_OF_TASKS;
     const startIndex = endIndex - QUANTITY_OF_TASKS;
+    console.log('sliced tasks', taskList);
     return list.splice(startIndex, endIndex);
   };
 
@@ -64,7 +66,10 @@
     taskList.forEach((task) => {
       task.title = task.title.trim();
     });
-    taskList = taskList.filter((task) => task.title.length);
+    console.log('valid1', taskList);
+    
+    //taskList = taskList.filter((task) => task.title.length > 0);
+    console.log('valid2', taskList);
   };
   const taskFilterCounter = () => {
     const counter = {
@@ -81,9 +86,15 @@
     let prePaginationList = '';
     let currentList = [];
     taskValidation();
-    currentList = getTasksByFilterType();
-    listToPages(currentList);
-    taskListPages[currentPage - 1].forEach((task) => {
+    //currentList = getTasksByFilterType();
+    //console.log(getTasksByFilterType());
+    console.log('start render', taskList);
+    currentList = getSlicedTasks();
+    //console.log(getSlicedTasks());
+
+    //listToPages(currentList);
+    console.log('from render', taskList);
+    currentList.forEach((task) => {
       listOfTasks += `
         <li id=${task.id}>
           <input type="checkbox" class="check-task" ${task.isDone ? 'checked' : ''}>
@@ -107,7 +118,6 @@
     tabulationDiv.children[1].innerHTML = `Active (${tabNumbers.active})`;
     tabulationDiv.children[2].innerHTML = `Completed (${tabNumbers.completed})`;
     for (let i = 1; i <= Math.ceil(currentList.length / QUANTITY_OF_TASKS); i += 1) {
-      console.log(i, currentPage);
       prePaginationList += `<button class="page-number ${(i === currentPage ? 'active' : '')}">${i}</button>`;
     }
     paginationDiv.innerHTML = prePaginationList;
@@ -115,21 +125,24 @@
 
   const setPage = (event) => {
     if (event.target.classList.contains('page-number')) {
-      currentPage = +event.target.innerHTML;
+      currentPage = Number(event.target.innerHTML);
     }
     taskRender();
   };
 
   const addTask = () => {
+    console.log('aaaaa', taskList);
     const task = {
       id: Date.now(),
-      title: strValidation(inputTask.value),
+      title: inputTask.value,
       isDone: false,
     };
-
+    console.log('before push add task', task);
     taskList.push(task);
+    console.log('after push add task', taskList);
     inputTask.value = '';
     filterType = 'show-all';
+    console.log('qq', taskList);
     taskRender();
   };
 
@@ -202,7 +215,7 @@
   };
 
   const tabulationListener = (event) => {
-    currentPage = 0;
+    currentPage = 1;
     filterType = event.target.id;
     taskRender();
   };
