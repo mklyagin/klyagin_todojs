@@ -19,13 +19,6 @@
 
   //const strValidation = (inputStr) => inputStr.replace(/[!@#$%^&*()'"`<>;:]/g, '');
 
-  const calcPagesNumber = (tasksArray) => {
-    if (tasksArray.length === 0) {
-      return 1;
-    }
-    return Math.ceil(tasksArray.length / QUANTITY_OF_TASKS);
-  };
-
   const getTasksByFilterType = () => {
     console.log('get task by filtertype', taskList);
     if (filterType === 'show-active') {
@@ -36,12 +29,19 @@
     return taskList;
   };
 
+  const calcPagesNumber = () => {
+    const currentArrayLength = getTasksByFilterType().length;
+    if (currentArrayLength === 0) {
+      return 1;
+    }
+    return Math.ceil(currentArrayLength / QUANTITY_OF_TASKS);
+  };
+
   const getSlicedTasks = () => {
-    let list = getTasksByFilterType();
+    const list = getTasksByFilterType();
     const endIndex = currentPage * QUANTITY_OF_TASKS;
     const startIndex = endIndex - QUANTITY_OF_TASKS;
-    console.log('sliced tasks', taskList);
-    return list.splice(startIndex, endIndex);
+    return list.slice(startIndex, endIndex);
   };
 
   const checkAllTaskStates = () => {
@@ -50,27 +50,6 @@
       : false;
   };
 
-  const listToPages = (currentList) => {
-    taskListPages = [[]];
-    let index = 0;
-    currentList.forEach((task) => {
-      if (taskListPages[index].length === QUANTITY_OF_TASKS) {
-        taskListPages.push([]);
-        index += 1;
-      }
-      taskListPages[index].push(task);
-    });
-  };
-
-  const taskValidation = () => {
-    taskList.forEach((task) => {
-      task.title = task.title.trim();
-    });
-    console.log('valid1', taskList);
-    
-    //taskList = taskList.filter((task) => task.title.length > 0);
-    console.log('valid2', taskList);
-  };
   const taskFilterCounter = () => {
     const counter = {
       total: taskList.length,
@@ -85,14 +64,8 @@
     let listOfTasks = '';
     let prePaginationList = '';
     let currentList = [];
-    taskValidation();
-    //currentList = getTasksByFilterType();
-    //console.log(getTasksByFilterType());
     console.log('start render', taskList);
     currentList = getSlicedTasks();
-    //console.log(getSlicedTasks());
-
-    //listToPages(currentList);
     console.log('from render', taskList);
     currentList.forEach((task) => {
       listOfTasks += `
@@ -117,7 +90,7 @@
     tabulationDiv.children[0].innerHTML = `All (${tabNumbers.total})`;
     tabulationDiv.children[1].innerHTML = `Active (${tabNumbers.active})`;
     tabulationDiv.children[2].innerHTML = `Completed (${tabNumbers.completed})`;
-    for (let i = 1; i <= Math.ceil(currentList.length / QUANTITY_OF_TASKS); i += 1) {
+    for (let i = 1; i <= calcPagesNumber(); i += 1) {
       prePaginationList += `<button class="page-number ${(i === currentPage ? 'active' : '')}">${i}</button>`;
     }
     paginationDiv.innerHTML = prePaginationList;
@@ -131,18 +104,14 @@
   };
 
   const addTask = () => {
-    console.log('aaaaa', taskList);
     const task = {
       id: Date.now(),
       title: inputTask.value,
       isDone: false,
     };
-    console.log('before push add task', task);
     taskList.push(task);
-    console.log('after push add task', taskList);
     inputTask.value = '';
     filterType = 'show-all';
-    console.log('qq', taskList);
     taskRender();
   };
 
@@ -168,7 +137,7 @@
           editVisibilityToggle(event.target.previousElementSibling);
           taskList.forEach((task) => {
             if (task.id === Number(event.target.id)) {
-              task.title = strValidation(event.target.value);
+              task.title = event.target.value;
             }
           });
           taskRender();
