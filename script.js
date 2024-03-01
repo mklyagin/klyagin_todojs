@@ -207,9 +207,11 @@
   };
 
   const tabulationListener = (event) => {
-    currentPage = 1;
-    filterType = event.target.id;
-    taskRender();
+    if (event.target.nodeName === 'BUTTON') {
+      currentPage = 1;
+      filterType = event.target.id;
+      taskRender();
+    }
   };
 
   ulTasks.addEventListener('click', eventUlHandlerListener);
