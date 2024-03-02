@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo JS</title> 
+    <link rel="stylesheet" href="./style.css">  
+  </head>
+  <body>
+    <h1>ToDo JS</h1>
+    <div class="input-section">
+      <input
+        maxlength="150"
+        id="enter-task-input"
+        placeholder="Type your task"
+      >
+      <button type="button" id="add-task-button">Add task</button>
+    </div>
+    <div class ='check-all-tasks'>
+      <input type="checkbox" id="check-all-checkbox">
+      <span>Check all tasks</span>
+    </div>
+    <div class="task-functions">
+      <ul id="task-list"></ul>
+      <button
+        type="button"
+        id="delete-all-completed-button"
+      >
+        Delete all completed
+      </button>
+      <div id="tabulation">
+        <button id="show-all" class="tab-button active">All (0)</button>
+        <button id="show-active" class="tab-button">Active (0)</button>
+        <button id="show-completed" class="tab-button" >Completed (0)</button>
+      </div>
+    </div>
+    <div id="pagination"></div>
+    <script src="./script.js"></script>
+  </body>
+</html>
